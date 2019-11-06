@@ -61,6 +61,22 @@ Args:
     width: number of bits to modify
     value: width bits value to write at position (masked to width if more))";
 
+
+/// Documentation for the register lock function
+    auto sRegisterLockDocString =
+        R"(Lock the bar interface for exclusive use
+
+Args:
+    none)";
+
+/// Documentation for the register lock function
+    auto sRegisterUnlockDocString =
+        R"(Release the bar interface from exclusive use
+
+Args:
+    none)";
+
+
 class BarChannel
 {
  public:
@@ -85,6 +101,16 @@ class BarChannel
     return mBarChannel->modifyRegister(address / 4, position, width, value);
   }
 
+  void lock()
+  {
+    return mBarChannel->lock();
+  }
+
+  void unlock()
+  {
+    return mBarChannel->unlock();
+  }
+
  private:
   std::shared_ptr<AliceO2::roc::BarInterface> mBarChannel;
 };
@@ -99,5 +125,7 @@ BOOST_PYTHON_MODULE(libReadoutCard)
   class_<BarChannel>("BarChannel", init<std::string, int>(sInitDocString))
     .def("register_read", &BarChannel::read, sRegisterReadDocString)
     .def("register_write", &BarChannel::write, sRegisterWriteDocString)
-    .def("register_modify", &BarChannel::modify, sRegisterModifyDocString);
+    .def("register_modify", &BarChannel::modify, sRegisterModifyDocString)
+    .def("register_lock", &BarChannel::lock, sRegisterLockDocString);
+    .def("register_unlock", &BarChannel::unlock, sRegisterUnlockDocString);
 }

@@ -24,6 +24,7 @@ namespace roc
 
 BarInterfaceBase::BarInterfaceBase(const Parameters& parameters)
   : mBarIndex(parameters.getChannelNumberRequired())
+  , mBarProtection(open_or_create, getCardId() + std::to_string(mBarIndex))
 {
   auto id = parameters.getCardIdRequired();
   if (auto serial = boost::get<int>(&id)) {

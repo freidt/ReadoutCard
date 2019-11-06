@@ -17,6 +17,7 @@
 #ifndef ALICEO2_SRC_READOUTCARD_BARINTERFACEBASE_H_
 #define ALICEO2_SRC_READOUTCARD_BARINTERFACEBASE_H_
 
+#include <boost/interprocess/sync/named_mutex.hpp>
 #include <boost/optional/optional_io.hpp>
 #include <memory>
 #include "InfoLogger/InfoLogger.hxx"
@@ -74,6 +75,14 @@ class BarInterfaceBase : public BarInterface
   virtual boost::optional<std::string> getCardId() override
   {
     return {};
+  }
+
+  void lock() {
+    mBarProtection.lock();
+  }
+
+  void unlock() {
+    mBarProtection.unlock();
   }
 
   /// Default implementation for optional function
@@ -134,6 +143,8 @@ class BarInterfaceBase : public BarInterface
 
   /// Convenience function for InfoLogger
   void log(std::string logMessage, InfoLogger::InfoLogger::Severity logLevel = InfoLogger::InfoLogger::Info);
+
+  boost::interprocess::named_mutex mBarProtection;
 
  private:
   /// Inheriting classes must implement this to check whether a given read is safe.
